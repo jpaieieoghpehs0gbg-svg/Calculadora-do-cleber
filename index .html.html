@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Calc - HDMI Ready</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --calc-body: #d1d1cf;
+            --btn-gray: #4a4a4a;
+            --btn-accent: #e67e22;
+            --screen-bg: #9ead86;
+            --screen-text: #2c3123;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container Principal Responsivo */
+        .calculator {
+            background-color: var(--calc-body);
+            width: 100%;
+            max-width: 380px; /* Tamanho ideal para mobile e escala em TV */
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 15px 15px 0px #000000;
+            border: 3px solid #333;
+        }
+
+        /* Visor LCD Retrô */
+        .screen {
+            background-color: var(--screen-bg);
+            height: 80px;
+            width: 100%;
+            margin-bottom: 30px;
+            border: 5px inset #777;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 15px;
+            font-size: 2.5rem;
+            color: var(--screen-text);
+            overflow: hidden;
+            text-shadow: 1px 1px 0px #ffffff40;
+        }
+
+        /* Grade de Botões */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            height: 65px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: var(--btn-gray);
+            color: white;
+            box-shadow: 0px 5px 0px #222;
+            transition: all 0.05s;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0px 1px 0px #222;
+        }
+
+        button.operator { background-color: #333; }
+        button.equals { 
+            background-color: var(--btn-accent); 
+            grid-column: span 2; 
+            box-shadow: 0px 5px 0px #a05818;
+        }
+        button.clear { background-color: #c0392b; box-shadow: 0px 5px 0px #7b241c; }
+
+        /* Ajuste para modo HDMI/Landscape ou Telas Maiores */
+        @media (min-width: 800px) {
+            .calculator {
+                max-width: 450px;
+                padding: 40px;
+            }
+            button { height: 80px; font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="screen" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearScreen()">C</button>
+            <button class="operator" onclick="appendValue('/')">/</button>
+            <button class="operator" onclick="appendValue('*')">×</button>
+            <button class="operator" onclick="backspace()">DEL</button>
+            
+            <button onclick="appendValue('7')">7</button>
+            <button onclick="appendValue('8')">8</button>
+            <button onclick="appendValue('9')">9</button>
+            <button class="operator" onclick="appendValue('-')">-</button>
+            
+            <button onclick="appendValue('4')">4</button>
+            <button onclick="appendValue('5')">5</button>
+            <button onclick="appendValue('6')">6</button>
+            <button class="operator" onclick="appendValue('+')">+</button>
+            
+            <button onclick="appendValue('1')">1</button>
+            <button onclick="appendValue('2')">2</button>
+            <button onclick="appendValue('3')">3</button>
+            <button onclick="appendValue('.')">.</button>
+            
+            <button onclick="appendValue('0')">0</button>
+            <button class="equals" onclick="calculate()">ENTER</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+
+        function appendValue(value) {
+            if (display.innerText === '0' && value !== '.') {
+                display.innerText = value;
+            } else {
+                display.innerText += value;
+            }
+        }
+
+        function clearScreen() {
+            display.innerText = '0';
+        }
+
+        function backspace() {
+            display.innerText = display.innerText.slice(0, -1);
+            if (display.innerText === '') display.innerText = '0';
+        }
+
+        function calculate() {
+            try {
+                // Avalia a expressão matemática
+                let result = eval(display.innerText);
+                // Limita casas decimais para não quebrar o visor
+                display.innerText = Number.isInteger(result) ? result : result.toFixed(4);
+            } catch {
+                display.innerText = "ERRO";
+                setTimeout(clearScreen, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
